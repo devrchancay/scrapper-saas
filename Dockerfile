@@ -1,11 +1,12 @@
 # --- Base ---
 FROM node:22-bookworm-slim AS base
+RUN corepack enable && corepack prepare pnpm@latest --activate
 
 # --- Dependencies ---
 FROM base AS deps
 WORKDIR /app
-COPY package.json package-lock.json ./
-RUN npm ci
+COPY package.json pnpm-lock.yaml ./
+RUN pnpm install --frozen-lockfile
 
 # --- Builder ---
 FROM base AS builder
@@ -13,8 +14,8 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 ENV NEXT_TELEMETRY_DISABLED=1
-RUN npx drizzle-kit generate
-RUN npm run build
+RUN pnpm exec drizzle-kit generate
+RUN pnpm run build
 
 # --- Runner ---
 FROM base AS runner
@@ -32,11 +33,11 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
 # Install only what's needed for running migrations at startup
-RUN npm install --no-save tsx dotenv drizzle-orm pg
+RUN pnpm add --no-save tsx dotenv drizzle-orm pg
 
 USER nextjs
 EXPOSE 3000
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 
-CMD ["sh", "-c", "npx tsx lib/db/migrate.ts && node server.js"]
+CMD ["sh", "-c", "pnpm exec tsx lib/db/migrate.ts && node server.js"]
