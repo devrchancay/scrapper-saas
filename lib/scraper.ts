@@ -1,3 +1,10 @@
+import fs from 'fs';
+
+// Docker/Railway: browsers are installed at /ms-playwright during build
+if (fs.existsSync('/ms-playwright')) {
+  process.env.PLAYWRIGHT_BROWSERS_PATH = '/ms-playwright';
+}
+
 import { chromium, type Browser } from 'playwright';
 import TurndownService from 'turndown';
 import OpenAI from 'openai';

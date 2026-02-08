@@ -28,6 +28,6 @@ COPY --from=builder /app/tsconfig.json ./
 
 # Install Playwright Chromium to a fixed path (avoids $HOME issues in Railway)
 ENV PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
-RUN pnpm exec playwright install --with-deps chromium
+RUN ./node_modules/.bin/playwright install --with-deps chromium
 
 CMD ["sh", "-c", "./node_modules/.bin/tsx lib/db/migrate.ts && ./node_modules/.bin/tsx worker/index.ts"]
