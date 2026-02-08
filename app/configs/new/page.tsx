@@ -15,9 +15,11 @@ export default function NewConfigPage() {
     setError('');
 
     const formData = new FormData(e.currentTarget);
+    const prompt = (formData.get('prompt') as string).trim();
     const body = {
       url: formData.get('url') as string,
       selector: formData.get('selector') as string,
+      prompt: prompt || undefined,
       minutes: Number(formData.get('minutes')) || 5,
     };
 
@@ -82,6 +84,22 @@ export default function NewConfigPage() {
               type="text"
               required
               placeholder="main, .content, #data"
+              className="mt-1 block w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 dark:placeholder:text-zinc-500"
+            />
+          </div>
+
+          <div>
+            <label
+              htmlFor="prompt"
+              className="block text-sm font-medium text-zinc-700 dark:text-zinc-300"
+            >
+              Prompt
+            </label>
+            <textarea
+              id="prompt"
+              name="prompt"
+              rows={3}
+              defaultValue="Extract structured data from the following markdown content. Return valid JSON."
               className="mt-1 block w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 dark:placeholder:text-zinc-500"
             />
           </div>

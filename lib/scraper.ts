@@ -27,9 +27,12 @@ export async function scrapeConfig(configId: number): Promise<void> {
 
   try {
     const browser = await getBrowser();
-    const page = await browser.newPage();
+    const page = await browser.newPage({
+      userAgent:
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
+    });
 
-    await page.goto(config.url, { waitUntil: 'networkidle', timeout: 30_000 });
+    await page.goto(config.url, { waitUntil: 'domcontentloaded', timeout: 30_000 });
 
     const html = await page.$eval(config.selector, (el) => el.innerHTML);
     await page.close();
@@ -59,8 +62,7 @@ export async function scrapeConfig(configId: number): Promise<void> {
       messages: [
         {
           role: 'system',
-          content:
-            'Extract structured data from the following markdown content. Return valid JSON.',
+          content: config.prompt,
         },
         { role: 'user', content: markdown },
       ],
