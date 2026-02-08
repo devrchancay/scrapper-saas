@@ -31,6 +31,12 @@ COPY --from=builder /app/lib/db/migrate.ts ./lib/db/migrate.ts
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
+# Install Playwright Chromium to a fixed path (avoids $HOME issues in Railway)
+ENV PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
+RUN ./node_modules/.bin/playwright install --with-deps chromium
+
+CMD ["sh", "-c", "./node_modules/.bin/tsx lib/db/migrate.ts && ./node_modules/.bin/tsx worker/index.ts"]
+
 # Install only what's needed for running migrations at startup
 RUN pnpm add tsx dotenv drizzle-orm pg
 
