@@ -33,7 +33,7 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
 # Install only what's needed for running migrations at startup
-RUN pnpm add --no-save tsx dotenv drizzle-orm pg
+RUN pnpm add tsx dotenv drizzle-orm pg
 
 USER nextjs
 EXPOSE 3000
