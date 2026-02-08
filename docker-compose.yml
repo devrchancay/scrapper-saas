@@ -1,0 +1,58 @@
+services:
+  db:
+    image: postgres:15-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: scrapper
+      POSTGRES_PASSWORD: scrapper_pass
+      POSTGRES_DB: scrapper_db
+    ports:
+      - '5432:5432'
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - scrapper-net
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U scrapper -d scrapper_db']
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - '3000:3000'
+    environment:
+      DATABASE_URL: postgresql://scrapper:scrapper_pass@db:5432/scrapper_db
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - scrapper-net
+
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile.worker
+    restart: unless-stopped
+    init: true
+    ipc: host
+    environment:
+      DATABASE_URL: postgresql://scrapper:scrapper_pass@db:5432/scrapper_db
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - scrapper-net
+
+volumes:
+  pgdata:
+
+networks:
+  scrapper-net:
+    driver: bridge
