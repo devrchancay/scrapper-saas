@@ -15,6 +15,13 @@
       "when": 1770568103063,
       "tag": "0001_living_wrecker",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1770574697893,
+      "tag": "0002_fearless_logan",
+      "breakpoints": true
     }
   ]
 }

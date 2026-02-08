@@ -1,0 +1,3 @@
+ALTER TABLE "scraping_configs" ADD COLUMN "public_id" uuid DEFAULT gen_random_uuid() NOT NULL;--> statement-breakpoint
+ALTER TABLE "scraping_configs" ADD COLUMN "prompt" text DEFAULT 'Extract structured data from the following markdown content. Return valid JSON.' NOT NULL;--> statement-breakpoint
+ALTER TABLE "scraping_configs" ADD CONSTRAINT "scraping_configs_public_id_unique" UNIQUE("public_id");
