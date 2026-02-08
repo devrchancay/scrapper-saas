@@ -29,4 +29,4 @@ COPY --from=builder /app/tsconfig.json ./
 # Install Playwright Chromium and its system dependencies
 RUN pnpm exec playwright install --with-deps chromium
 
-CMD ["sh", "-c", "pnpm exec tsx lib/db/migrate.ts && pnpm exec tsx worker/index.ts"]
+CMD ["sh", "-c", "./node_modules/.bin/tsx lib/db/migrate.ts && ./node_modules/.bin/tsx worker/index.ts"]
